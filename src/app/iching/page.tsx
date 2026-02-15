@@ -51,14 +51,14 @@ export default function IChingPage() {
     }
   }
 
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLSelectElement | HTMLInputElement>) => {
-    const { name, value, type } = e.target
-    
-    if (type === 'radio') {
-      setDivinationData(prev => ({ ...prev, [name]: value }))
-    } else {
-      setDivinationData(prev => ({ ...prev, [name]: value }))
-    }
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target
+    setDivinationData(prev => ({ ...prev, [name]: value }))
+  }
+
+  const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    setDivinationData(prev => ({ ...prev, [name]: value }))
   }
 
   const toggleFocusArea = (value: string) => {
@@ -134,7 +134,7 @@ export default function IChingPage() {
                         name="method"
                         value={method.value}
                         checked={divinationData.method === method.value}
-                        onChange={handleChange}
+                        onChange={handleRadioChange}
                         className="sr-only"
                       />
                       <div className={`h-full p-4 rounded-xl border transition-all ${
