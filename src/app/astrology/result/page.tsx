@@ -7,12 +7,11 @@ import {
   TrendingUp, Shield, Download, Share2, MessageCircle,
   ChevronLeft, Sparkles
 } from 'lucide-react'
-import { AstrologyResponse } from '@/types/astrology'
 
 function AstrologyResultContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const [result, setResult] = useState<AstrologyResponse | null>(null)
+  const [result, setResult] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('personality')
 
@@ -196,7 +195,7 @@ function AstrologyResultContent() {
                   成长建议
                 </h3>
                 <ul className="space-y-3">
-                  {analysis.personality.growthAdvice.map((advice, index) => (
+                  {analysis.personality.growthAdvice.map((advice: string, index: number) => (
                     <li key={index} className="flex items-start">
                       <div className="w-6 h-6 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 flex items-center justify-center text-xs font-bold mr-3 flex-shrink-0">
                         {index + 1}
@@ -227,7 +226,7 @@ function AstrologyResultContent() {
                   适合职业领域
                 </h3>
                 <div className="flex flex-wrap gap-2">
-                  {analysis.career.suitableFields.map((field, index) => (
+                  {analysis.career.suitableFields.map((field: string, index: number) => (
                     <span key={index} className="px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 text-sm">
                       {field}
                     </span>
@@ -255,7 +254,7 @@ function AstrologyResultContent() {
                   关系建议
                 </h3>
                 <ul className="space-y-3">
-                  {analysis.love.relationshipAdvice.map((advice, index) => (
+                  {analysis.love.relationshipAdvice.map((advice: string, index: number) => (
                     <li key={index} className="flex items-start">
                       <div className="w-6 h-6 rounded-full bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400 flex items-center justify-center text-xs font-bold mr-3 flex-shrink-0">
                         {index + 1}
@@ -286,7 +285,7 @@ function AstrologyResultContent() {
                   养生建议
                 </h3>
                 <ul className="space-y-3">
-                  {analysis.health.wellnessTips.map((tip, index) => (
+                  {analysis.health.wellnessTips.map((tip: string, index: number) => (
                     <li key={index} className="flex items-start">
                       <div className="w-6 h-6 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 flex items-center justify-center text-xs font-bold mr-3 flex-shrink-0">
                         {index + 1}
@@ -322,6 +321,55 @@ function AstrologyResultContent() {
               下一步建议
             </h3>
             <ul className="space-y-3">
-              {nextSteps.map((step, index) => (
+              {nextSteps.map((step: string, index: number) => (
                 <li key={index} className="flex items-start">
-                  <div className="w-6 h-6 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-
+                  <div className="w-6 h-6 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 flex items-center justify-center text-xs font-bold mr-3 flex-shrink-0">
+                    {index + 1}
+                  </div>
+                  <span className="text-gray-700 dark:text-gray-300 text-sm">{step}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      {/* Philosophy */}
+      <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-3xl p-8 text-center">
+        <h3 className="text-2xl font-bold text-white mb-4">
+          占星智慧启示
+        </h3>
+        <p className="text-purple-100 mb-6 max-w-2xl mx-auto">
+          星盘是地图，不是命运。真正的智慧在于理解自己的特质、发挥优势、成长进化。
+          无论星盘如何，人的自由意志和持续成长才是决定人生的关键。
+        </p>
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <button className="px-6 py-3 rounded-full bg-white text-purple-600 font-semibold hover:bg-purple-50 transition-colors">
+            记录本次分析
+          </button>
+          <button 
+            onClick={() => router.push('/')}
+            className="px-6 py-3 rounded-full border-2 border-white text-white font-semibold hover:bg-white/10 transition-colors"
+          >
+            新的分析
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default function AstrologyResultPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <div className="w-16 h-16 mx-auto border-4 border-purple-500 border-t-transparent rounded-full animate-spin" />
+          <p className="text-gray-600 dark:text-gray-400">正在加载星盘分析...</p>
+        </div>
+      </div>
+    }>
+      <AstrologyResultContent />
+    </Suspense>
+  )
+}

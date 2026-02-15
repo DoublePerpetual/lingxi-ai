@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { 
   Moon, Brain, Sparkles, Book, Heart, AlertCircle,
@@ -8,7 +8,7 @@ import {
   TrendingUp, Lightbulb, Shield, Clock
 } from 'lucide-react'
 
-export default function DreamResultPage() {
+function DreamResultContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [result, setResult] = useState<any>(null)
@@ -426,5 +426,20 @@ export default function DreamResultPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function DreamResultPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <div className="w-16 h-16 mx-auto border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+          <p className="text-gray-600 dark:text-gray-400">正在加载梦境分析...</p>
+        </div>
+      </div>
+    }>
+      <DreamResultContent />
+    </Suspense>
   )
 }
