@@ -1,0 +1,35 @@
+{
+  "name": "lingxi-ai",
+  "version": "1.0.0",
+  "description": "AI星座、占卜、周易与情感陪护平台",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3003",
+    "dev:3000": "next dev",
+    "dev:3002": "next dev -p 3002",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "15.1.6",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "tailwindcss": "^3.4.0",
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.38",
+    "axios": "^1.6.8",
+    "date-fns": "^3.6.0",
+    "lucide-react": "^0.344.0",
+    "swr": "^2.2.5",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.24",
+    "@types/react": "^19.0.1",
+    "@types/react-dom": "^19.0.1",
+    "typescript": "^5.3.3",
+    "eslint": "^8.56.0",
+    "eslint-config-next": "15.1.6"
+  }
+}
