@@ -1,12 +1,14 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { 
   Book, Sparkles, Target, Clock, Shield, 
   Download, Share2, MessageCircle, ChevronLeft,
   TrendingUp, AlertCircle, Lightbulb, Heart, Circle
 } from 'lucide-react'
+
+function IChingResultContent() {
 
 export default function IChingResultPage() {
   const router = useRouter()
@@ -352,5 +354,20 @@ export default function IChingResultPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function IChingResultPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <div className="w-16 h-16 mx-auto border-4 border-amber-500 border-t-transparent rounded-full animate-spin" />
+          <p className="text-gray-600 dark:text-gray-400">正在加载卦象解读...</p>
+        </div>
+      </div>
+    }>
+      <IChingResultContent />
+    </Suspense>
   )
 }

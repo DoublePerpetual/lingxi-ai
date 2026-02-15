@@ -98,7 +98,7 @@ export async function POST(request: NextRequest) {
     // 构建完整的占卜记录
     const divinationReading: IChingReading = {
       question: divinationRequest.question,
-      method: divinationRequest.method,
+      method: divinationRequest.method || 'digital', // 添加默认值
       primaryHexagram,
       changingHexagram,
       changingLines,

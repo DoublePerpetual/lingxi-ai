@@ -51,9 +51,14 @@ export default function IChingPage() {
     }
   }
 
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target
-    setDivinationData(prev => ({ ...prev, [name]: value }))
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLSelectElement | HTMLInputElement>) => {
+    const { name, value, type } = e.target
+    
+    if (type === 'radio') {
+      setDivinationData(prev => ({ ...prev, [name]: value }))
+    } else {
+      setDivinationData(prev => ({ ...prev, [name]: value }))
+    }
   }
 
   const toggleFocusArea = (value: string) => {

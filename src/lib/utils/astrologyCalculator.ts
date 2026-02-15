@@ -94,14 +94,14 @@ export function calculateAstrologyChart(birthInfo: BirthInfo): AstrologyChart {
   }
 
   // 计算主导元素和模式
-  const elementCount = { fire: 0, earth: 0, air: 0, water: 0 }
-  const modalityCount = { cardinal: 0, fixed: 0, mutable: 0 }
+  const elementCount: Record<string, number> = { fire: 0, earth: 0, air: 0, water: 0 }
+  const modalityCount: Record<string, number> = { cardinal: 0, fixed: 0, mutable: 0 }
   
   planets.forEach(planet => {
     const sign = ZODIAC_SIGNS.find(s => s.sign === planet.sign)
     if (sign) {
-      elementCount[sign.element]++
-      modalityCount[sign.modality]++
+      elementCount[sign.element] = (elementCount[sign.element] || 0) + 1
+      modalityCount[sign.modality] = (modalityCount[sign.modality] || 0) + 1
     }
   })
 
