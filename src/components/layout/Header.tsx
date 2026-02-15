@@ -1,7 +1,20 @@
-import { Sparkles, User, Menu } from 'lucide-react'
+'use client'
+
+import { useState } from 'react'
+import { Sparkles, User, Menu, X } from 'lucide-react'
 import Link from 'next/link'
 
 export function Header() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
+  const navItems = [
+    { href: '/', label: '首页' },
+    { href: '/astrology', label: '星盘解读' },
+    { href: '/dream', label: '梦境解析' },
+    { href: '/iching', label: '周易占卜' },
+    { href: '/companion', label: '情感陪护', disabled: true },
+  ]
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-gray-200/50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md">
       <div className="container mx-auto px-4 py-4">
@@ -22,23 +35,20 @@ export function Header() {
             </div>
           </Link>
 
-          {/* Navigation */}
+          {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <Link href="/" className="text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors font-medium">
-              首页
-            </Link>
-            <Link href="/astrology" className="text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors font-medium">
-              星盘解读
-            </Link>
-            <Link href="/dream" className="text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors font-medium">
-              梦境解析
-            </Link>
-            <Link href="/iching" className="text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors font-medium">
-              周易占卜
-            </Link>
-            <Link href="/companion" className="text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors font-medium opacity-50 cursor-not-allowed" title="开发中">
-              情感陪护
-            </Link>
+            {navItems.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors font-medium ${
+                  item.disabled ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
+                title={item.disabled ? '开发中' : ''}
+              >
+                {item.label}
+              </Link>
+            ))}
           </nav>
 
           {/* User Actions */}
@@ -49,11 +59,51 @@ export function Header() {
             <button className="p-2 rounded-full border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
               <User className="w-5 h-5" />
             </button>
-            <button className="md:hidden p-2 rounded-full border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-              <Menu className="w-5 h-5" />
+            
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-2 rounded-full border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              aria-label="菜单"
+            >
+              {mobileMenuOpen ? (
+                <X className="w-5 h-5" />
+              ) : (
+                <Menu className="w-5 h-5" />
+              )}
             </button>
           </div>
         </div>
+
+        {/* Mobile Menu */}
+        {mobileMenuOpen && (
+          <div className="md:hidden mt-4 pb-4 animate-in slide-in-from-top-5 duration-300">
+            <div className="space-y-2">
+              {navItems.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`block py-3 px-4 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors font-medium ${
+                    item.disabled ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
+                  title={item.disabled ? '开发中' : ''}
+                >
+                  {item.label}
+                  {item.disabled && (
+                    <span className="ml-2 text-xs text-gray-500">(开发中)</span>
+                  )}
+                </Link>
+              ))}
+            </div>
+            
+            <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-800">
+              <button className="w-full py-3 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium hover:shadow-lg transition-all">
+                开始探索
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </header>
   )
