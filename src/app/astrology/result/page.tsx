@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { 
   Sun, Moon, Star, Brain, Heart, Briefcase, 
@@ -9,7 +9,7 @@ import {
 } from 'lucide-react'
 import { AstrologyResponse } from '@/types/astrology'
 
-export default function AstrologyResultPage() {
+function AstrologyResultContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [result, setResult] = useState<AstrologyResponse | null>(null)
@@ -24,7 +24,6 @@ export default function AstrologyResultPage() {
         if (storedData) {
           const parsedData = JSON.parse(storedData)
           setResult(parsedData)
-          // 清理sessionStorage
           sessionStorage.removeItem(sessionId)
         }
       } catch (error) {
@@ -54,21 +53,20 @@ export default function AstrologyResultPage() {
             onClick={() => router.push('/')}
             className="px-6 py-2 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:shadow-lg transition-all"
           >
-            返回首页重新分析
+            返回重新分析
           </button>
         </div>
       </div>
     )
   }
 
-  const { chart, analysis } = result
+  const { chart, analysis, nextSteps } = result
 
   const tabs = [
-    { id: 'personality', label: '性格分析', icon: <Brain className="w-4 h-4" /> },
-    { id: 'relationships', label: '人际关系', icon: <Heart className="w-4 h-4" /> },
-    { id: 'career', label: '事业发展', icon: <Briefcase className="w-4 h-4" /> },
-    { id: 'lifePath', label: '人生课题', icon: <TrendingUp className="w-4 h-4" /> },
-    { id: 'advice', label: '实用建议', icon: <Shield className="w-4 h-4" /> },
+    { id: 'personality', label: '性格特质', icon: <Brain className="w-4 h-4" /> },
+    { id: 'career', label: '事业财运', icon: <Briefcase className="w-4 h-4" /> },
+    { id: 'love', label: '感情婚姻', icon: <Heart className="w-4 h-4" /> },
+    { id: 'health', label: '健康运势', icon: <Shield className="w-4 h-4" /> },
   ]
 
   return (
@@ -101,41 +99,59 @@ export default function AstrologyResultPage() {
           <div className="space-y-4">
             <div className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white text-sm font-medium">
               <Sparkles className="w-4 h-4 mr-2" />
-              AI专属星盘分析
+              AI星盘解读报告
             </div>
             <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
-              你的专属星盘解读
+              {chart.name}的专属星盘分析
             </h1>
             <p className="text-gray-600 dark:text-gray-400 max-w-2xl">
-              基于你的出生信息，结合DeepSeek AI与专业占星知识生成的个性化分析
+              基于专业占星算法与DeepSeek AI的深度解读
             </p>
           </div>
           
           <div className="flex items-center space-x-6">
             <div className="text-center">
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-yellow-500 to-orange-500 flex items-center justify-center mx-auto mb-2">
-                <Sun className="w-8 h-8 text-white" />
+              <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center mx-auto mb-3">
+                <Sun className="w-10 h-10 text-white" />
               </div>
               <div className="font-semibold">太阳星座</div>
-              <div className="text-2xl font-bold text-gray-900 dark:text-white">{chart.sunSign}</div>
+              <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                {chart.sunSign.chinese}
+              </div>
+              <div className="text-sm text-gray-500">{chart.sunSign.english}</div>
             </div>
             
             <div className="text-center">
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center mx-auto mb-2">
-                <Moon className="w-8 h-8 text-white" />
+              <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center mx-auto mb-3">
+                <Moon className="w-10 h-10 text-white" />
               </div>
               <div className="font-semibold">月亮星座</div>
-              <div className="text-2xl font-bold text-gray-900 dark:text-white">{chart.moonSign}</div>
-            </div>
-            
-            <div className="text-center">
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center mx-auto mb-2">
-                <Star className="w-8 h-8 text-white" />
+              <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                {chart.moonSign.chinese}
               </div>
-              <div className="font-semibold">上升星座</div>
-              <div className="text-2xl font-bold text-gray-900 dark:text-white">{chart.risingSign}</div>
+              <div className="text-sm text-gray-500">{chart.moonSign.english}</div>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Basic Info */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm rounded-2xl p-4 border border-gray-200/50 dark:border-gray-800/50 text-center">
+          <div className="text-sm text-gray-500 dark:text-gray-400">上升星座</div>
+          <div className="font-semibold text-gray-900 dark:text-white">{chart.risingSign.chinese}</div>
+        </div>
+        <div className="bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm rounded-2xl p-4 border border-gray-200/50 dark:border-gray-800/50 text-center">
+          <div className="text-sm text-gray-500 dark:text-gray-400">主导元素</div>
+          <div className="font-semibold text-gray-900 dark:text-white">{chart.dominantElement}</div>
+        </div>
+        <div className="bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm rounded-2xl p-4 border border-gray-200/50 dark:border-gray-800/50 text-center">
+          <div className="text-sm text-gray-500 dark:text-gray-400">主导模式</div>
+          <div className="font-semibold text-gray-900 dark:text-white">{chart.dominantModality}</div>
+        </div>
+        <div className="bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm rounded-2xl p-4 border border-gray-200/50 dark:border-gray-800/50 text-center">
+          <div className="text-sm text-gray-500 dark:text-gray-400">分析置信度</div>
+          <div className="font-semibold text-gray-900 dark:text-white">{Math.round(analysis.confidence * 100)}%</div>
         </div>
       </div>
 
@@ -160,136 +176,140 @@ export default function AstrologyResultPage() {
       {/* Content */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Analysis */}
-        <div className="lg:col-span-2 space-y-8">
+        <div className="lg:col-span-2 space-y-6">
           {/* Personality Tab */}
           {activeTab === 'personality' && (
             <div className="space-y-6 animate-in">
               <div className="bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 dark:border-gray-800/50">
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
                   <Brain className="w-5 h-5 mr-2 text-purple-600" />
-                  核心优势
-                </h3>
-                <ul className="space-y-3">
-                  {analysis.personality.strengths.map((strength, index) => (
-                    <li key={index} className="flex items-start">
-                      <div className="w-2 h-2 rounded-full bg-green-500 mt-2 mr-3" />
-                      <span className="text-gray-700 dark:text-gray-300">{strength}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              
-              <div className="bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 dark:border-gray-800/50">
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-                  潜在挑战
-                </h3>
-                <ul className="space-y-3">
-                  {analysis.personality.challenges.map((challenge, index) => (
-                    <li key={index} className="flex items-start">
-                      <div className="w-2 h-2 rounded-full bg-yellow-500 mt-2 mr-3" />
-                      <span className="text-gray-700 dark:text-gray-300">{challenge}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              
-              <div className="bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 dark:border-gray-800/50">
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-                  内在动机
+                  核心性格特质
                 </h3>
                 <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                  {analysis.personality.coreMotivation}
+                  {analysis.personality.overview}
                 </p>
+              </div>
+              
+              <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-2xl p-6 border border-purple-200/50 dark:border-purple-900/50">
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                  <TrendingUp className="w-5 h-5 mr-2 text-purple-600" />
+                  成长建议
+                </h3>
+                <ul className="space-y-3">
+                  {analysis.personality.growthAdvice.map((advice, index) => (
+                    <li key={index} className="flex items-start">
+                      <div className="w-6 h-6 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 flex items-center justify-center text-xs font-bold mr-3 flex-shrink-0">
+                        {index + 1}
+                      </div>
+                      <span className="text-gray-700 dark:text-gray-300">{advice}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
           )}
 
-          {/* Relationships Tab */}
-          {activeTab === 'relationships' && (
+          {/* Career Tab */}
+          {activeTab === 'career' && (
+            <div className="space-y-6 animate-in">
+              <div className="bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 dark:border-gray-800/50">
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                  <Briefcase className="w-5 h-5 mr-2 text-blue-600" />
+                  事业发展方向
+                </h3>
+                <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                  {analysis.career.overview}
+                </p>
+              </div>
+              
+              <div className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 rounded-2xl p-6 border border-blue-200/50 dark:border-blue-900/50">
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                  适合职业领域
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {analysis.career.suitableFields.map((field, index) => (
+                    <span key={index} className="px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 text-sm">
+                      {field}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Love Tab */}
+          {activeTab === 'love' && (
             <div className="space-y-6 animate-in">
               <div className="bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 dark:border-gray-800/50">
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
                   <Heart className="w-5 h-5 mr-2 text-pink-600" />
-                  情感需求
+                  感情模式分析
                 </h3>
                 <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                  {analysis.relationships.emotionalNeeds}
+                  {analysis.love.overview}
                 </p>
               </div>
               
-              <div className="bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 dark:border-gray-800/50">
+              <div className="bg-gradient-to-br from-pink-500/10 to-rose-500/10 rounded-2xl p-6 border border-pink-200/50 dark:border-pink-900/50">
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-                  沟通风格
+                  关系建议
                 </h3>
-                <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                  {analysis.relationships.communicationStyle}
-                </p>
-              </div>
-              
-              <div className="bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 dark:border-gray-800/50">
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-                  相处建议
-                </h3>
-                <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                  {analysis.relationships.compatibility}
-                </p>
+                <ul className="space-y-3">
+                  {analysis.love.relationshipAdvice.map((advice, index) => (
+                    <li key={index} className="flex items-start">
+                      <div className="w-6 h-6 rounded-full bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400 flex items-center justify-center text-xs font-bold mr-3 flex-shrink-0">
+                        {index + 1}
+                      </div>
+                      <span className="text-gray-700 dark:text-gray-300">{advice}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
           )}
 
-          {/* Add other tabs similarly... */}
-          {activeTab !== 'personality' && activeTab !== 'relationships' && (
-            <div className="bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm rounded-2xl p-8 border border-gray-200/50 dark:border-gray-800/50 text-center">
-              <MessageCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                功能开发中
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                更多详细分析功能正在开发中，敬请期待！
-              </p>
+          {/* Health Tab */}
+          {activeTab === 'health' && (
+            <div className="space-y-6 animate-in">
+              <div className="bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 dark:border-gray-800/50">
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                  <Shield className="w-5 h-5 mr-2 text-green-600" />
+                  健康关注要点
+                </h3>
+                <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                  {analysis.health.overview}
+                </p>
+              </div>
+              
+              <div className="bg-gradient-to-br from-green-500/10 to-emerald-500/10 rounded-2xl p-6 border border-green-200/50 dark:border-green-900/50">
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                  养生建议
+                </h3>
+                <ul className="space-y-3">
+                  {analysis.health.wellnessTips.map((tip, index) => (
+                    <li key={index} className="flex items-start">
+                      <div className="w-6 h-6 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 flex items-center justify-center text-xs font-bold mr-3 flex-shrink-0">
+                        {index + 1}
+                      </div>
+                      <span className="text-gray-700 dark:text-gray-300">{tip}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           )}
         </div>
 
         {/* Sidebar */}
         <div className="space-y-6">
-          {/* Chart Summary */}
-          <div className="bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 dark:border-gray-800/50">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-              星盘摘要
-            </h3>
-            <div className="space-y-4">
-              <div>
-                <div className="text-sm text-gray-500 dark:text-gray-400">主导元素</div>
-                <div className="font-medium text-gray-900 dark:text-white">{chart.dominantElement}</div>
-              </div>
-              <div>
-                <div className="text-sm text-gray-500 dark:text-gray-400">主导模式</div>
-                <div className="font-medium text-gray-900 dark:text-white">{chart.dominantModality}</div>
-              </div>
-              <div>
-                <div className="text-sm text-gray-500 dark:text-gray-400">行星分布</div>
-                <div className="font-medium text-gray-900 dark:text-white">
-                  {chart.planets.length} 颗行星
-                </div>
-              </div>
-              <div>
-                <div className="text-sm text-gray-500 dark:text-gray-400">重要相位</div>
-                <div className="font-medium text-gray-900 dark:text-white">
-                  {chart.aspects.length} 个相位
-                </div>
-              </div>
-            </div>
-          </div>
-
           {/* AI Chat */}
           <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-2xl p-6 border border-purple-200/50 dark:border-purple-900/50">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
               <MessageCircle className="w-5 h-5 mr-2 text-purple-600" />
-              与AI深入交流
+              与AI深入探讨
             </h3>
             <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
-              对分析结果有疑问？想了解更多细节？
+              对星盘分析有疑问？想了解更多细节？
             </p>
             <button className="w-full py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-medium hover:shadow-lg transition-all">
               开始AI对话
@@ -302,36 +322,6 @@ export default function AstrologyResultPage() {
               下一步建议
             </h3>
             <ul className="space-y-3">
-              {analysis.advice.immediate.slice(0, 3).map((advice, index) => (
+              {nextSteps.map((step, index) => (
                 <li key={index} className="flex items-start">
-                  <div className="w-6 h-6 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 flex items-center justify-center text-xs font-bold mr-3 flex-shrink-0">
-                    {index + 1}
-                  </div>
-                  <span className="text-gray-700 dark:text-gray-300 text-sm">{advice}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      {/* CTA */}
-      <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-3xl p-8 text-center">
-        <h3 className="text-2xl font-bold text-white mb-4">
-          想要更深入的个性化分析？
-        </h3>
-        <p className="text-purple-100 mb-6 max-w-2xl mx-auto">
-          解锁无限AI对话、详细运势报告、情感陪护等高级功能
-        </p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <button className="px-8 py-3 rounded-full bg-white text-purple-600 font-semibold hover:bg-purple-50 transition-colors">
-            升级高级版
-          </button>
-          <button className="px-8 py-3 rounded-full border-2 border-white text-white font-semibold hover:bg-white/10 transition-colors">
-            免费试用7天
-          </button>
-        </div>
-      </div>
-    </div>
-  )
-}
+                  <div className="w-6 h-6 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-

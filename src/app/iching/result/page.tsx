@@ -8,7 +8,7 @@ import {
   TrendingUp, AlertCircle, Lightbulb, Heart, Circle
 } from 'lucide-react'
 
-function IChingResultPageContent() {
+function IChingResultContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [result, setResult] = useState<any>(null)
@@ -23,7 +23,6 @@ function IChingResultPageContent() {
         if (storedData) {
           const parsedData = JSON.parse(storedData)
           setResult(parsedData)
-          // 清理sessionStorage
           sessionStorage.removeItem(sessionId)
         }
       } catch (error) {
@@ -335,4 +334,37 @@ function IChingResultPageContent() {
         <h3 className="text-2xl font-bold text-white mb-4">
           《周易》智慧启示
         </h3>
-        <p className="text-amber-100 mb-6 max-w-
+        <p className="text-amber-100 mb-6 max-w-2xl mx-auto">
+          卦象提供的是地图，不是命运。真正的智慧在于理解变化、把握时机、修养德行。
+          无论卦象吉凶，人的主观能动性和道德修养才是决定成败的关键。
+        </p>
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <button className="px-6 py-3 rounded-full bg-white text-amber-600 font-semibold hover:bg-amber-50 transition-colors">
+            记录本次占卜
+          </button>
+          <button 
+            onClick={() => router.push('/iching')}
+            className="px-6 py-3 rounded-full border-2 border-white text-white font-semibold hover:bg-white/10 transition-colors"
+          >
+            新的占卜
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default function IChingResultPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <div className="w-16 h-16 mx-auto border-4 border-amber-500 border-t-transparent rounded-full animate-spin" />
+          <p className="text-gray-600 dark:text-gray-400">正在加载卦象解读...</p>
+        </div>
+      </div>
+    }>
+      <IChingResultContent />
+    </Suspense>
+  )
+}
